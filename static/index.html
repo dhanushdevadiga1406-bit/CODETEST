@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CODETEST - Automated Software Tester & Code Reviewer</title>
+    <!-- Pixel Fonts from Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=JetBrains+Mono:wght@400;500;700&family=VT323&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Top Pixel Header -->
+        <header class="pixel-header">
+            <div class="pixel-brand-container">
+                <div class="pixel-scanline"></div>
+                <div class="pixel-logo-wrapper">
+                    <canvas id="pixelCanvas" width="48" height="48" class="pixel-avatar"></canvas>
+                    <div class="brand-text">
+                        <h1 class="pixel-title" id="pixelTitle">
+                            <span class="pixel-char" style="--i:0">C</span><span class="pixel-char" style="--i:1">O</span><span class="pixel-char" style="--i:2">D</span><span class="pixel-char" style="--i:3">E</span><span class="pixel-char" style="--i:4">T</span><span class="pixel-char" style="--i:5">E</span><span class="pixel-char" style="--i:6">S</span><span class="pixel-char" style="--i:7">T</span>
+                        </h1>
+                        <p class="pixel-subtitle">BUG HUNTER &amp; CODE REVIEW TESTER // 8-BIT CORE</p>
+                    </div>
+                </div>
+                <div class="header-badges">
+                    <span class="pixel-badge status-online"><span class="blink-dot"></span> SYSTEM READY</span>
+                    <span class="pixel-badge version-badge">V1.0.0</span>
+                </div>
+            </div>
+
+            <!-- Toolbar Controls -->
+            <div class="toolbar">
+                <div class="toolbar-group">
+                    <label for="languageSelect" class="pixel-label">LANG:</label>
+                    <select id="languageSelect" class="pixel-select">
+                        <option value="auto">⚡ Auto Detect</option>
+                        <option value="python">Python (.py)</option>
+                        <option value="javascript">JavaScript (.js)</option>
+                        <option value="typescript">TypeScript (.ts)</option>
+                        <option value="go">Go (.go)</option>
+                        <option value="c">C (.c)</option>
+                        <option value="cpp">C++ (.cpp, .cc)</option>
+                        <option value="java">Java (.java)</option>
+                        <option value="csharp">C# (.cs)</option>
+                        <option value="rust">Rust (.rs)</option>
+                        <option value="php">PHP (.php)</option>
+                        <option value="ruby">Ruby (.rb)</option>
+                        <option value="kotlin">Kotlin (.kt)</option>
+                        <option value="swift">Swift (.swift)</option>
+                        <option value="sql">SQL (.sql)</option>
+                        <option value="html">HTML / CSS</option>
+                        <option value="generic">Universal / Generic</option>
+                    </select>
+
+                    <label for="presetSelect" class="pixel-label">PRESETS:</label>
+                    <select id="presetSelect" class="pixel-select">
+                        <option value="">-- Load Sample --</option>
+                        <optgroup label="NULL APPLICATION & HAZARDS">
+                            <option value="preset_null">Null / Empty Application (0-Line Test)</option>
+                            <option value="preset_null_hazards">Null Pointer &amp; NPE Hazards</option>
+                        </optgroup>
+                        <optgroup label="LANGUAGE TESTS">
+                            <option value="preset_python">Python (.py) - Parser &amp; Bug Test</option>
+                            <option value="preset_c">C (.c) - Memory &amp; NULL Pointers</option>
+                            <option value="preset_cpp">C++ (.cpp) - nullptr &amp; Syntax Test</option>
+                            <option value="preset_java">Java (.java) - javac &amp; NPE Hazards</option>
+                            <option value="preset_js">JavaScript (.js) - Node.js Sample</option>
+                            <option value="preset_ts">TypeScript (.ts) - tsc Syntax Test</option>
+                            <option value="preset_csharp">C# (.cs) - .NET NullReference Test</option>
+                            <option value="preset_go">Go (.go) - AST &amp; Nil Maps Sample</option>
+                            <option value="preset_rust">Rust (.rs) - Option None &amp; Unwraps</option>
+                            <option value="preset_sql">SQL (.sql) - = NULL Traps &amp; Hazards</option>
+                        </optgroup>
+                        <optgroup label="SCALE BENCHMARKS">
+                            <option value="preset_20">20 Lines (Python Bugs)</option>
+                            <option value="preset_200">200 Lines (Full App Bugs)</option>
+                            <option value="preset_500">500 Lines (Enterprise Benchmark)</option>
+                        </optgroup>
+                    </select>
+                </div>
+
+                <div class="toolbar-group">
+                    <input type="file" id="fileInput" style="display: none;" accept=".py,.js,.ts,.go,.cpp,.cc,.cxx,.c,.java,.cs,.txt,.html,.css,.json">
+                    <button id="uploadBtn" class="pixel-btn secondary-btn" title="Upload source code file">📂 UPLOAD</button>
+                    <button id="clearBtn" class="pixel-btn secondary-btn" title="Clear current editor">🗑️ CLEAR</button>
+                    <button id="analyzeBtn" class="pixel-btn primary-btn" title="Run error detection (Ctrl+Enter)">
+                        <span class="btn-icon">⚡</span> TEST CODE
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Workspace (Editor Area) -->
+        <main class="workspace-area">
+            <div class="editor-pane">
+                <div class="editor-header">
+                    <div class="pane-tabs">
+                        <span class="pane-tab active"><span class="tab-indicator">●</span> source_program<span id="fileExt">.py</span></span>
+                    </div>
+                    <div class="editor-stats">
+                        <span id="statLines">Lines: 1</span>
+                        <span id="statChars">Chars: 0</span>
+                        <span id="statLangBadge" class="detected-badge">AUTO</span>
+                    </div>
+                </div>
+
+                <div class="editor-container" id="editorContainer">
+                    <div class="line-gutter" id="lineGutter">
+                        <div class="line-num">1</div>
+                    </div>
+                    <textarea id="codeEditor" spellcheck="false" placeholder="// Paste or type your code here (20, 200, 500+ lines)...&#10;// Click 'TEST CODE' to find bugs and identify error lines!"></textarea>
+                </div>
+            </div>
+        </main>
+
+        <!-- Bottom Error / Bug Detection Panel -->
+        <section class="bottom-results-panel" id="resultsPanel">
+            <div class="panel-header">
+                <div class="panel-title-area">
+                    <div class="pixel-icon-term">▶</div>
+                    <h2 class="panel-title">ERROR DETECTION &amp; LINE INSPECTOR</h2>
+                    <div class="summary-pills" id="summaryPills">
+                        <span class="pill pill-idle">RUN TEST TO DETECT ERRORS</span>
+                    </div>
+                </div>
+                <div class="panel-controls">
+                    <div class="filter-group">
+                        <button class="filter-btn active" data-filter="all">ALL (<span id="countAll">0</span>)</button>
+                        <button class="filter-btn filter-error" data-filter="error">ERRORS (<span id="countErrors">0</span>)</button>
+                        <button class="filter-btn filter-warning" data-filter="warning">WARNINGS (<span id="countWarnings">0</span>)</button>
+                        <button class="filter-btn filter-info" data-filter="info">INFOS (<span id="countInfos">0</span>)</button>
+                    </div>
+                    <button id="togglePanelBtn" class="pixel-mini-btn" title="Minimize / Expand Panel">▲</button>
+                </div>
+            </div>
+
+            <!-- Issues List -->
+            <div class="issues-container" id="issuesContainer">
+                <div class="empty-state">
+                    <div class="pixel-radar"></div>
+                    <p class="empty-title">NO ERRORS TESTED YET</p>
+                    <p class="empty-desc">Click <strong>TEST CODE</strong> above or select a <strong>20, 200, or 500-line sample</strong> to inspect errors line by line.</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Pixel Notification Toast -->
+    <div id="toast" class="pixel-toast"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>
